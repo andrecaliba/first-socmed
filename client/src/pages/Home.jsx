@@ -6,6 +6,7 @@ const Home = () => {
   const fileInput = useRef(null);
   const preview = useRef(null);
   const [imagePath, setImagePath] = useState({display: "none"});
+  const sampleString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
 
   return (
     <>
@@ -13,21 +14,12 @@ const Home = () => {
         <div className="p-6 bg-champagne">
           <div className="flex justify-between">
             <h2 className="text-2xl font-bold">Make a Post</h2>
-            <div className="w-6 h-6 transition-colors rounded-full p-2 bg-[url('./src/assets/close.svg')] hover:bg-desert cursor-pointer"
-            onClick={() => postForm.current.close()}></div>
+            <div className="w-6 h-6 transition-colors rounded-full p-2 bg-[url('./src/assets/close.svg')] hover:bg-desert cursor-pointer" onClick={() => postForm.current.close()}></div>
           </div>
           <form action="">
-            <textarea
-            className="block text-2xl bg-champagne resize-none p-2"
-            placeholder="What's on your mind?"
-            rows="3"
-            cols="50"
-            name="caption">
+            <textarea className="block text-2xl bg-champagne resize-none p-2 mb-5 outline-none" placeholder="What's on your mind?" rows="3" cols="50" maxLength="75" name="caption">
             </textarea>
-            <input
-            ref={fileInput}
-            accept="image/*"
-            type="file"
+            <input ref={fileInput} accept="image/*" type="file"
             onChange={() => {
               let reader = new FileReader();
               reader.readAsDataURL(fileInput.current.files[0]);
@@ -39,12 +31,12 @@ const Home = () => {
             hidden/>
             {/*File Preview */}
             <div className="relative w-full bg-contain bg-no-repeat bg-center bg-top" ref={preview} style={imagePath}>
-              <img
-              className="absolute top-2 right-2 hover:bg-slate-50 hover:opacity-50 cursor-pointer"
-              src="./src/assets/close.svg"
-              alt="close"
-              onClick={() => setImagePath({display: "none"})}
-              />
+              <img className="absolute top-2 right-2 hover:bg-slate-50 hover:opacity-50 cursor-pointer" src="./src/assets/close.svg" alt="close" onClick={() => {
+                setImagePath({display: "none"});
+                fileInput.current.value = "";
+                fileInput.current.type = "text";
+                fileInput.current.type = "file";
+            }} />
             </div>
             <div className="flex justify-end">
               <div
@@ -73,8 +65,8 @@ const Home = () => {
         </div>
         <div className="w-3/5 bg-champagne h-full overflow-y-scroll flex-1">
           <h1 className="text-4xl font-bold text-carafe p-6">News Feed</h1>
-            <Post />
-            <Post />
+            <Post caption={sampleString} liked={false}/>
+            <Post caption={sampleString} liked={true}/>
         </div>
       </div>
     </>
