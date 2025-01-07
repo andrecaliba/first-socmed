@@ -2,7 +2,7 @@ import pool from '../../database/db.mjs';
 import { Router } from 'express';
 import { body, checkSchema, validationResult, matchedData } from 'express-validator';
 import registerSchema from './registerSchema.mjs';
-import { encrypt, decrypt } from './crypto.mjs';
+import { encrypt, decrypt } from '../../utils/crypto.mjs';
 import dotenv from 'dotenv';
 
 dotenv.config();

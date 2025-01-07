@@ -1,7 +1,42 @@
 import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
 const Login = () => {
 
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const logoutUser = async () => {
+      await fetch("http://localhost:3000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include"
+      });
+    };
+    logoutUser();
+  }, []);
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const body = { email, password };
+    const response = await fetch("http://localhost:3000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      credentials: "include"
+    });
+    if (response.ok) {
+      console.log("Login Successful client")
+      navigate("/home");
+    } else {
+      console.log("Login failed");
+    }
+  }
 
   return (
     <div
@@ -18,16 +53,19 @@ const Login = () => {
               <input
               className="w-full transition-colors border-b-sage border-b-2 focus:border-b-green-800 text-lg placeholder:text-sage mb-5"
               type="email"
-              placeholder="Email"/>
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}/>
             </div>
             
             <div>
               <input
               className="w-full transition-colors border-b-sage border-b-2 focus:border-b-green-800 text-lg placeholder:text-sage"
               placeholder="Password"
-              type="password" />
+              type="password"
+              onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <button className="bg-sage transition-opacity w-full rounded-lg mt-8 py-1 font-bold text-champagne text-xl hover:opacity-75" type="submit">Login</button>
+            <button className="bg-sage transition-opacity w-full rounded-lg mt-8 py-1 font-bold text-champagne text-xl hover:opacity-75"
+            onClick={loginUser}>Login</button>
             <div className="w-full h-px bg-carafe mt-5 "></div>
             <button
             className="bg-desert transition-opacity w-full rounded-lg mt-5 py-1 font-bold text-champagne text-xl hover:opacity-75"

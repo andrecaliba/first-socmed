@@ -8,9 +8,11 @@ export const decrypt = (data, key) => {
   try {
     const bytes = CryptoJS.AES.decrypt(data, key);
     if(bytes.sigBytes > 0) {
-      return bytes.toString(CryptoJS.enc.Utf8);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      return decrypted;
     }
   } catch(err) {
+    console.log(err.message);
     throw new Error("Failed to decrypt data");
   }
 }
