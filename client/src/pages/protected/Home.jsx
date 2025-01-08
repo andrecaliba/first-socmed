@@ -1,12 +1,55 @@
 import Post from '../../components/Post';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const Home = () => {
   const postForm = useRef(null);
   const fileInput = useRef(null);
   const preview = useRef(null);
   const [imagePath, setImagePath] = useState({display: "none"});
+  const [caption, setCaption] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const sampleString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const response = await fetch("http://localhost:3000/api/posts", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await response.json();
+      console.log(data[0].Post_Photo);
+      setPosts(data);
+    }
+    getPosts();
+  }, [uploadSuccess])
+
+  const post = async (e) => {
+    console.log("inside post function 000");
+    e.preventDefault();
+    const form = new FormData();
+    form.set("caption", caption);
+    form.set("file-photo", fileInput.current.files[0]);
+    const response = await fetch('http://localhost:3000/api/post', {
+      method: 'POST',
+      body: form,
+      credentials: 'include'
+    });
+
+    if(response.ok) {
+      postForm.current.close();
+      setCaption("");
+      setImagePath({display: "none"});
+      fileInput.current.value = "";
+      fileInput.current.type = "text";
+      fileInput.current.type = "file";
+      setUploadSuccess(() => !uploadSuccess);
+    }
+    
+  }
 
   return (
     <>
@@ -16,14 +59,14 @@ const Home = () => {
             <h2 className="text-2xl font-bold">Make a Post</h2>
             <div className="w-6 h-6 transition-colors rounded-full p-2 bg-[url('./src/assets/close.svg')] hover:bg-desert cursor-pointer" onClick={() => postForm.current.close()}></div>
           </div>
-          <form action="">
-            <textarea className="block text-2xl bg-champagne resize-none p-2 mb-5 outline-none" placeholder="What's on your mind?" rows="3" cols="50" maxLength="75" name="caption">
+          <form>
+            <textarea className="block text-2xl bg-champagne resize-none p-2 mb-5 outline-none" placeholder="What's on your mind?" rows="3" cols="50" maxLength="75" name="caption"
+            onChange={(e) => setCaption(e.target.value)}>
             </textarea>
-            <input ref={fileInput} accept="image/*" type="file"
+            <input ref={fileInput} accept="image/*" type="file" name="file-photo"
             onChange={() => {
               let reader = new FileReader();
               reader.readAsDataURL(fileInput.current.files[0]);
-              console.log(reader.result);
               reader.onload = () => {
                 setImagePath({backgroundImage: `url(${reader.result})`, height: "24rem"});
               }
@@ -43,6 +86,7 @@ const Home = () => {
               className="w-6 h-6 mt-4 transition-transform rounded-full bg-[url('./src/assets/image.svg')] hover:-translate-y-1 cursor-pointer"
               onClick={() => fileInput.current.click()}></div>
             </div>
+            <button className="bg-carafe text-xl px-4 py-2 text-champagne font-bold rounded-xl" onClick={post}>Post</button>
           </form>
         </div>
       </dialog>
@@ -65,8 +109,9 @@ const Home = () => {
         </div>
         <div className="w-3/5 bg-champagne h-full overflow-y-scroll flex-1">
           <h1 className="text-4xl font-bold text-carafe p-6">News Feed</h1>
-            <Post caption={sampleString} liked={false}/>
-            <Post caption={sampleString} liked={true}/>
+          {posts.map((post) => {
+            return <Post key={post.Post_ID} caption={post.Post_Caption} liked={false} likes={post.Post_Likes} comments={post.Post_Comments} srcURL={post.Post_Photo} user={post.User_Username}/>
+          })}
         </div>
       </div>
     </>

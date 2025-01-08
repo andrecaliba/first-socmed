@@ -32,10 +32,7 @@ router.post('/api/login', checkSchema(loginSchema), async (req, res) => {
     }
 
     req.session.visited = true;
-    console.log("before setting user");
     req.session.user = { id: user.User_ID };
-    console.log("after setting user");
-    console.log('Session set:', req.session.user);
     res.json({ msg: 'Login successful' });
     con.release();
 
