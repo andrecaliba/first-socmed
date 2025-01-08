@@ -21,14 +21,12 @@ const Home = () => {
       });
 
       const data = await response.json();
-      console.log(data[0].Post_Photo);
       setPosts(data);
     }
     getPosts();
   }, [uploadSuccess])
 
   const post = async (e) => {
-    console.log("inside post function 000");
     e.preventDefault();
     const form = new FormData();
     form.set("caption", caption);
