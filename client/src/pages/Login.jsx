@@ -30,9 +30,12 @@ const Login = () => {
       body: JSON.stringify(body),
       credentials: "include"
     });
+    console.log(response);
+    console.log("Role: ", response.role)
     if (response.ok) {
       console.log("Login Successful client")
-      navigate("/home");
+      const {msg, role} = await response.json();
+      role && role === "Admin" ? navigate('/admin') : navigate('home')
     } else {
       console.log("Login failed");
     }

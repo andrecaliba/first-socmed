@@ -1,10 +1,12 @@
 import Post from '../../components/Post';
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 
 const Home = () => {
   const postForm = useRef(null);
   const fileInput = useRef(null);
   const preview = useRef(null);
+  const navigate = useNavigate();
   const [imagePath, setImagePath] = useState({display: "none"});
   const [caption, setCaption] = useState("");
   const [posts, setPosts] = useState([]);
@@ -46,7 +48,17 @@ const Home = () => {
       fileInput.current.type = "file";
       setUploadSuccess(() => !uploadSuccess);
     }
-    
+  }
+
+  const logout = async (e) => {
+    await fetch("http://localhost:3000/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    })
+    navigate("/");
   }
 
   return (
@@ -98,7 +110,7 @@ const Home = () => {
             </div>
             <p className="text-right text-2xl pl-4 font-bold text-carafe group-hover:text-champagne">Post</p>
           </div>
-          <div className="flex transition-colors hover:bg-carafe cursor-pointer rounded-lg group p-2 mb-2">
+          <div className="flex transition-colors hover:bg-carafe cursor-pointer rounded-lg group p-2 mb-2" onClick={logout}>
             <div className="flex justify-center items-center pl-2">
               <svg className="group-hover:fill-champagne" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#6a463a"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
             </div>

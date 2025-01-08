@@ -33,7 +33,7 @@ router.post('/api/login', checkSchema(loginSchema), async (req, res) => {
 
     req.session.visited = true;
     req.session.user = { id: user.User_ID };
-    res.json({ msg: 'Login successful' });
+    res.json({ msg: 'Login successful', role: user.User_Role });
     con.release();
 
   } catch(err) {
