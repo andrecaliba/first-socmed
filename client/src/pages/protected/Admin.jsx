@@ -6,17 +6,10 @@ const Admin = () => {
   const deleteUser = useRef(null);
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState({username: '', email: '', password: '', id: ''});
+  const [toDelete, setToDelete] = useState();
 
-  const logout = async (e) => {
-    e.preventDefault();
-    await fetch("http://localhost:3000/api/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include"
-    })
+  const logout = (e) => {
     navigate("/");
   }
 
@@ -43,6 +36,20 @@ const Admin = () => {
     }
   }
 
+  const removeUser = async () => {
+    const response = await fetch("http://localhost:3000/api/users", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({toDelete})
+    })
+    if(response.ok) {
+      setUsers(users.map(user => user.User_ID !== toDelete));
+      deleteUser.current.close();
+    }
+  }
+
   useEffect(() => {
     const getUsers = async () => {
       const response = await fetch("http://localhost:3000/api/users", {
@@ -58,7 +65,7 @@ const Admin = () => {
         setUsers(users);
       }
     }
-   getUsers();
+    getUsers();
   }, [])
 
   return (
@@ -105,7 +112,7 @@ const Admin = () => {
         <h2 className="text-sage text-2xl font-bold mb-4">Delete User Account</h2>
         <form>
           <h3 className="text-red-400 font-bold text-lg">Are you sure you want to delete this user?</h3>
-          <button className="bg-red-500 transition-opacity w-full rounded-lg mt-8 py-1 font-bold text-champagne text-xl hover:opacity-75">Delete</button>
+          <button className="bg-red-500 transition-opacity w-full rounded-lg mt-8 py-1 font-bold text-champagne text-xl hover:opacity-75" onClick={removeUser}>Delete</button>
           <div className="w-full h-px bg-carafe mt-5 "></div>
           <button
           className="bg-desert transition-opacity w-full rounded-lg mt-5 py-1 font-bold text-champagne text-xl hover:opacity-75"
@@ -154,6 +161,7 @@ const Admin = () => {
                     <td className="text-center p-2">
                       <button className="p-2 bg-red-500 text-champagne rounded-lg" data-id={user.User_ID}
                       onClick={() => {
+                        setToDelete(user.User_ID);
                         deleteUser.current.showModal();
                       }}>Delete</button>
                     </td>

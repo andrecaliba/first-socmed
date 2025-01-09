@@ -39,6 +39,13 @@ router.put("/api/users", checkSchema(userSchema), async (req, res) => {
   } catch(err) {
     console.log(err.message);
   }
-})
+});
+
+router.delete("/api/users", async (req, res) => {
+  const { toDelete } = req.body;
+  const sql = "DELETE FROM users WHERE USER_ID = ?";
+  const [rows, fields] = await conn.execute(sql, [toDelete]);
+  res.json({msg: "User was deleteed"});
+});
 
 export default router;
