@@ -18,7 +18,7 @@ const Registration = () => {
       },
       body: JSON.stringify(body)
     });
-    window.location = "/register";
+    navigate("/login");
     result.json();
   }
 
